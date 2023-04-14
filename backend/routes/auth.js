@@ -8,23 +8,21 @@ var fetchuser = require('../middleware/fetchuser');
 const nodemailer = require('nodemailer');
 //var session = require('express-session');
 const JWT_SECRET = process.env.JWT_SECRET;
+const Transaction = require("../models/Transaction");
 
 
 
-// ROUTE 1: Create a User using: POST "/api/auth/createuser". No login required
 router.post('/createuser', [
   body('name', 'Enter a valid name').isLength({ min: 3 }),
   body('email', 'Enter a valid email').isEmail(),
   body('password', 'Password must be atleast 5 characters').isLength({ min: 5 }),
 ], async (req, res) => {
   let success = false;
-  // If there are errors, return Bad request and the errors
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    // Check whether the user with this email exists already
     let user = await User.findOne({ email: req.body.email });
     if (user) {
       return res.status(400).json({ success, error: "Sorry a user with this email already exists" })
@@ -32,7 +30,6 @@ router.post('/createuser', [
     const salt = await bcrypt.genSalt(10);
     const secPass = await bcrypt.hash(req.body.password, salt);
 
-    // Create a new user
     user = await User.create({
       name: req.body.name,
       password: secPass,
@@ -46,9 +43,6 @@ router.post('/createuser', [
     }
     const authtoken = jwt.sign(data, JWT_SECRET);
     success = true;
-    //console.log(success)
-
-    // res.json(user)
     res.json({ success, authtoken, "role": "user" })
 
   } catch (error) {
@@ -58,7 +52,6 @@ router.post('/createuser', [
 })
 
 
-// ROUTE 2: Authenticate a User using: POST "/api/auth/login". No login required
 router.post('/login', [
   body('email', 'Enter a valid email').isEmail(),
   body('password', 'Password cannot be blank').exists(),
@@ -101,8 +94,6 @@ router.post('/login', [
 
 });
 
-
-// ROUTE 3: Get loggedin User Details using: POST "/api/auth/getuser". Login required
 router.post('/getuser', fetchuser, async (req, res) => {
 
   try {
@@ -146,7 +137,7 @@ router.post("/send-otp", async (req, res) => {
       } else {
         req.session.otp = otp;
         console.log(req.session.otp)
-        res.send({ success: true, otp,message: 'OTP sent successfully' });
+        res.send({ success: true, otp, message: 'OTP sent successfully' });
       }
     });
   } catch (error) {
@@ -155,7 +146,6 @@ router.post("/send-otp", async (req, res) => {
   }
 
 });
-
 
 
 router.post("/verify-otp", async (req, res) => {
@@ -202,14 +192,54 @@ router.post("/changepassword", async (req, res) => {
     // res.json(user)
     res.json({ success, authtoken, "role": "user" })
 
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
+router.post("/verify-user", async function (req, res) {
+  try {
+    let token = req.body.code.slice(0, 160);
+    let session = req.body.code[req.body.code.length - 1];
 
+    if (!token) {
+      res.status(401).send({ error: "Invalid" })
+    }
+    const data = jwt.verify(token, process.env.JWT_SECRET);
+    let user = data.user;
+    let transactions = await Transaction.find(user);
+    //console.log(transactions)
+    let recentTransaction1 = transactions[transactions.length - 1];
+    let recentTransaction2 = transactions[transactions.length - 2];
+    let valid = false;
+    let today = new Date();
+    if (recentTransaction1) {
+      let t1 = recentTransaction1.startDate;
+      let t2 = recentTransaction1.endDate;
+      t1 = new Date(t1);
+      t2 = new Date(t2);
+      if (t1.getTime() <= today.getTime() && t2.getTime() >= today.getTime()) {
+        valid =true;
+      }
+    }
+     if (recentTransaction2) {
+      let t3 = recentTransaction2.startDate;
+      let t4 = recentTransaction2.endDate;
+      t3 = new Date(t3);
+      t4 = new Date(t4);
+      if (t3.getTime() <= today.getTime() && t4.getTime() >= today.getTime()) {
+        valid=true;
+      }
+    }
+    res.send(valid)
 
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");
   }
-})
+
+});
 
 module.exports = router;
 

@@ -10,6 +10,7 @@ import Signup from "./Signup";
 import Forgotpass from "./Forgotpass";
 import Payment from "./Payment";
 import Navbar from "./Navbar";
+import Transactions from "./Transactions";
 
 
 
@@ -30,6 +31,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/forgotpass" element={<Forgotpass />} />
       <Route path="/payment" element={<><Navbar/><Payment /></>} />
+      <Route path="/transactions" element={<><Navbar/><Transactions/></>} />
       
     </Routes>
   );

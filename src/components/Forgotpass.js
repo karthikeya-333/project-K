@@ -31,7 +31,7 @@ function Forgotpass(){
             body: JSON.stringify({email,purpose:"forgot"}),
         });
         const json = await response.json();
-        if(json.success==true){
+        if(json.success===true){
             setOTP({...OTP,success:true});
             setSentOTP(json.otp);
         }

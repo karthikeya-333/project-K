@@ -10,12 +10,16 @@ const TransactionSchema = new Schema({
         type:String,
         required:true
     },
+    orderID:{
+        type:String,
+        required:true
+    },
     user:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user'
     },
-    time:{
-        type:String,
+    Date:{
+        type:Date,
         required:true
     },
     startDate:{

@@ -9,27 +9,19 @@ const User = require('../models/User');
 
 router.post("/addTransaction",fetchuser,async(req,res)=>{
     try {
-
-        const {  startDate, endDate, success ,amount,paymentID,time} = req.body;
-
+        const {startDate,endDate,success,amount,paymentID,orderID,Date} = req.body;
         if(success){
             const newTransaction = new Transaction({
-                startDate,paymentID,time,endDate,amount,user:req.user.id
+                startDate,paymentID,orderID,Date,endDate,amount,user:req.user.id
             })
             const savedTransaction = await newTransaction.save();
-            const user = await User.findById(req.user.id);
-            let newtransactions = user.transactions;
-            newtransactions.push(savedTransaction);
-            let recent =await User.updateOne({_id:req.user.id},{transactions:newtransactions})
             res.send(savedTransaction);
-
         }
         
     }catch(error){
         console.error(error.message);
         res.status(500).send("Internal Server Error");
     }
-
 });
 
 

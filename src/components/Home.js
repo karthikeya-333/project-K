@@ -2,26 +2,30 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import kContext from "../contexts/Context";
 import QRgenerate from "./QRgenerate";
+import Scanner from "./Scanner"
 
 
 function Home() {
     const context = useContext(kContext);
-    let { getTransactions,transactions, valid } = context;
+    let { getTransactions,valid } = context;
 
     useEffect(() => {
        getTransactions();
     }, []);
-    //console.log(localStorage.getItem("token"));
-     //console.log(transactions);
-    
+
     return (
-        <>
-            <h1>homee</h1>
-            {valid ? <><QRgenerate session="breakfast" date="1/1/2023" />
-            <QRgenerate session="lunch" date="1/1/2023" />
-            <QRgenerate session="dinner" date="1/1/2023" /> <h1><Link to="/payment"><button>pay</button></Link></h1></> : <h1><Link to="/payment"><button>pay</button></Link></h1>}
-        </>
+        // <Scanner/>
+        <div>
+            <h1>homeee</h1>
+            {valid ? <div><QRgenerate session="breakfast"  />
+            <QRgenerate session="lunch" />
+            <QRgenerate session="dinner" /> </div> : <h1><Link to="/payment"><button>pay</button></Link></h1>}
+        </div>
+        
+        
     )
 }
 
 export default Home;
+
+

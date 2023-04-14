@@ -30,7 +30,7 @@ function State(props) {
       t1 = new Date(t1);
       t2 = new Date(t2);
       if (t1.getTime() <= today.getTime() && t2.getTime() >= today.getTime()) {
-        //console.log(true);
+        console.log(true);
         setValid(true);
       }
     }
