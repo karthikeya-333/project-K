@@ -28,16 +28,27 @@ router.post('/create-order', async (req, res) => {
   }
 });
 
-
+//new Array(days).fill(0).map(() => new Array(3).fill(0));
 router.post("/success", async (req, res) => {
   try {
-    const {
+    let {
       orderCreationId,
       razorpayPaymentId,
       razorpayOrderId,
       razorpaySignature,
       endDate, startDate, authToken
     } = req.body;
+    
+
+    let diffInTime =  new Date(endDate).getTime() - new Date(startDate).getTime();
+    let days  = diffInTime / (1000 * 3600 * 24)  +1;
+    let now = new Date(endDate).getTime();
+    endDate =  new Date(now - (now % 86400000) + 86400000-1);
+    // let attendance= [];
+    // for(var i=0;i<days;i++){
+    //   attendance.push(["NO","NO","NO"]);
+    // }
+    let amount=days*100;
 
     const shasum = crypto.createHmac("sha256", process.env.KEY_SECRET);
     
@@ -51,8 +62,9 @@ router.post("/success", async (req, res) => {
       res.status(401).send({ error: "Please authenticate using a valid token 1" })
     }
     const data = jwt.verify(authToken, process.env.JWT_SECRET);
+    //console.log(attendance);
     const newTransaction = new Transaction({
-      startDate, paymentID:razorpayPaymentId, orderID:razorpayOrderId, Date: new Date(), endDate, amount:100, user: data.user.id
+      startDate, paymentID:razorpayPaymentId, orderID:razorpayOrderId, Date: new Date(), endDate, amount, user: data.user.id
     })
     const savedTransaction = await newTransaction.save();
     res.json({

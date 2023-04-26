@@ -24,6 +24,7 @@ app.use(session({
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/transaction', require('./routes/transaction'));
 app.use('/api/payment', require('./routes/pay'));
+app.use('/api/session', require('./routes/session'));
 
 
 

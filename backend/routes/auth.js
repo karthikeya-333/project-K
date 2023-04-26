@@ -9,6 +9,7 @@ const nodemailer = require('nodemailer');
 //var session = require('express-session');
 const JWT_SECRET = process.env.JWT_SECRET;
 const Transaction = require("../models/Transaction");
+const Session = require('../models/Session');
 
 
 
@@ -207,8 +208,9 @@ router.post("/verify-user", async function (req, res) {
       res.status(401).send({ error: "Invalid" })
     }
     const data = jwt.verify(token, process.env.JWT_SECRET);
-    let user = data.user;
-    let transactions = await Transaction.find(user);
+    let userID = data.user;
+    let transactions = await Transaction.find(userID);
+    let user = await User.find(userID);
     //console.log(transactions)
     let recentTransaction1 = transactions[transactions.length - 1];
     let recentTransaction2 = transactions[transactions.length - 2];
@@ -220,19 +222,46 @@ router.post("/verify-user", async function (req, res) {
       t1 = new Date(t1);
       t2 = new Date(t2);
       if (t1.getTime() <= today.getTime() && t2.getTime() >= today.getTime()) {
-        valid =true;
+        valid = true;
+        let attendance = recentTransaction1.attendance;
+        let day = today.getDay() - t1.getDay();
+        if (attendance[day][session - 1] == 1) {
+          valid = false;
+        }
+        else {
+          attendance[day][session - 1] = 1;
+          await Transaction.findOneAndUpdate({ _id: recentTransaction1._id }, { attendance: attendance });
+          today = today.toLocaleDateString()
+          let nowSession = await Session.findOne({ session: session, date: today });
+          let attendanceToday = nowSession.attendance;
+          attendanceToday.push(userID);
+          await Session.findOneAndUpdate({ session, date: today }, { attendance: attendanceToday })
+        }
       }
     }
-     if (recentTransaction2) {
+    if (recentTransaction2) {
       let t3 = recentTransaction2.startDate;
       let t4 = recentTransaction2.endDate;
       t3 = new Date(t3);
       t4 = new Date(t4);
       if (t3.getTime() <= today.getTime() && t4.getTime() >= today.getTime()) {
-        valid=true;
+        valid = true;
+        let attendance = recentTransaction2.attendance;
+        let day = today.getDate() - t3.getDate();
+        if (attendance[day][session - 1] == 1) {
+          valid = false;
+        }
+        else {
+          attendance[day][session - 1] = 1;
+          await Transaction.findOneAndUpdate({ _id: recentTransaction1._id }, { attendance: attendance });
+          let nowSession = await Session.findOne({ session: session, date: today });
+          let attendanceToday = nowSession.attendance;
+          attendanceToday.push(userID);
+          await Session.findOneAndUpdate({ session, date: today }, { attendance: attendanceToday })
+        }
       }
     }
-    res.send(valid)
+    res.send(valid);
 
   } catch (error) {
     console.error(error.message);
