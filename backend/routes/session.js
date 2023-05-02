@@ -4,36 +4,46 @@ const Session = require('../models/Session');
 var fetchuser = require('../middleware/fetchuser');
 
 
-router.post("/addMenu", async function(req,res){
+router.post("/addMenu", async function (req, res) {
 
-    let {menu,session}=req.body;
-    let attendance=[];
+    let { menu, session } = req.body;
+    let attendance = [];
     let date = new Date().toLocaleDateString();
-
     try {
-        const newMenu = new Session({
-           menu,session,date,attendance
-        })
-        const savedMenu = await newMenu.save();
-        res.send(savedMenu);
-        
-    }catch(error){
+        let oldMenu = await Session.findOne({ date: date, session: session });
+        if (oldMenu) {
+            let savedMenu = await Session.findOneAndUpdate({date: date, session: session },{menu});
+            res.send({"menu":savedMenu.menu});
+        }
+        else {
+            const newMenu = new Session({
+                menu, session, date, attendance
+            })
+            const savedMenu = await newMenu.save();
+            res.send({"menu":savedMenu.menu});
+        }
+    } catch (error) {
         console.error(error.message);
         res.status(500).send("Internal Server Error");
     }
 });
 
-router.post("/getMenu",fetchuser, async function(req,res){
+router.post("/getMenu",  async function (req, res) {
 
     try {
         let date = new Date().toLocaleDateString();
-        let {session} =req.body;
+        let { session } = req.body;
 
-        let menu = await Session.findOne({date:date,session:session});
+        let menu = await Session.findOne({ date: date, session: session });
         //console.log(menu)
-        res.send(menu);
-        
-    }catch(error){
+        if(menu){
+            res.send({menu,msg:"avaliable"});
+        }
+        else{
+            res.send({msg:"not-avaliable"});
+
+        }
+    } catch (error) {
         console.error(error.message);
         res.status(500).send("Internal Server Error");
     }

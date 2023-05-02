@@ -11,6 +11,15 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const Transaction = require("../models/Transaction");
 const Session = require('../models/Session');
 
+function dateDiffInDays(a, b) {
+  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+  // Discard the time and time-zone information.
+  const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+}
+
 
 
 router.post('/createuser', [
@@ -216,6 +225,7 @@ router.post("/verify-user", async function (req, res) {
     let recentTransaction2 = transactions[transactions.length - 2];
     let valid = false;
     let today = new Date();
+    let today1 = today.toLocaleDateString()
     if (recentTransaction1) {
       let t1 = recentTransaction1.startDate;
       let t2 = recentTransaction1.endDate;
@@ -224,18 +234,19 @@ router.post("/verify-user", async function (req, res) {
       if (t1.getTime() <= today.getTime() && t2.getTime() >= today.getTime()) {
         valid = true;
         let attendance = recentTransaction1.attendance;
-        let day = today.getDay() - t1.getDay();
+        let day = dateDiffInDays(t1,today);
+       // console.log(day);
         if (attendance[day][session - 1] == 1) {
           valid = false;
         }
         else {
           attendance[day][session - 1] = 1;
           await Transaction.findOneAndUpdate({ _id: recentTransaction1._id }, { attendance: attendance });
-          today = today.toLocaleDateString()
-          let nowSession = await Session.findOne({ session: session, date: today });
+          let nowSession = await Session.findOne({ session: session, date: today1 });
+          //console.log(nowSession)
           let attendanceToday = nowSession.attendance;
           attendanceToday.push(userID);
-          await Session.findOneAndUpdate({ session, date: today }, { attendance: attendanceToday })
+          await Session.findOneAndUpdate({ session, date: today1 }, { attendance: attendanceToday })
         }
       }
     }
@@ -247,20 +258,21 @@ router.post("/verify-user", async function (req, res) {
       if (t3.getTime() <= today.getTime() && t4.getTime() >= today.getTime()) {
         valid = true;
         let attendance = recentTransaction2.attendance;
-        let day = today.getDate() - t3.getDate();
+        let day = dateDiffInDays(t3,today);
         if (attendance[day][session - 1] == 1) {
           valid = false;
         }
         else {
           attendance[day][session - 1] = 1;
           await Transaction.findOneAndUpdate({ _id: recentTransaction1._id }, { attendance: attendance });
-          let nowSession = await Session.findOne({ session: session, date: today });
+          let nowSession = await Session.findOne({ session: session, date: today1 });
           let attendanceToday = nowSession.attendance;
           attendanceToday.push(userID);
-          await Session.findOneAndUpdate({ session, date: today }, { attendance: attendanceToday })
+          await Session.findOneAndUpdate({ session, date: today1 }, { attendance: attendanceToday })
         }
       }
     }
+    console.log(valid);
     res.send(valid);
 
   } catch (error) {

@@ -17,9 +17,9 @@ function Home() {
         // <Scanner/>
         <div>
             <h1>homeee</h1>
-            {valid ? <div><QRgenerate session="breakfast"  />
-            <QRgenerate session="lunch" />
-            <QRgenerate session="dinner" /> </div> : <h1><Link to="/payment"><button>pay</button></Link></h1>}
+            {valid ? <div><QRgenerate session="breakfast" index={1} />
+            <QRgenerate session="lunch" index={2} />
+            <QRgenerate session="dinner" index={3} /> </div> : <h1><Link to="/payment"><button>pay</button></Link></h1>}
         </div>
         
         

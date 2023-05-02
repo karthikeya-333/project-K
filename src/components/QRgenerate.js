@@ -4,11 +4,12 @@ import kContext from "../contexts/Context";
 
 function QRgenerate(props) {
 
-    let session,text="Upcoming";
+    let session=1,text="Upcoming";
     let context = useContext(kContext);
     let {menu,getMenu,attendance,day}=context;
     let view = false;
     var today = new Date().getHours();
+    console.log(attendance,day);
     if(props.session=="breakfast"){
         session=1;
         if(today >= 7 && today <= 9  && attendance[day][session-1]==0){
@@ -54,7 +55,7 @@ function QRgenerate(props) {
     
 
     useEffect(() => {
-        getMenu(session);
+        getMenu(props.index);
     }, []);
     
 

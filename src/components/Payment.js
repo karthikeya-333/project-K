@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import kContext from "../contexts/Context";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 function dateDiffInDays(a, b) {
     const _MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -29,6 +30,7 @@ function Payment() {
     const context = useContext(kContext);
     const [details, setDetails] = useState({ startDate: new Date(), endDate: new Date() });
     const [amount, setAmount] = useState(100);
+    const Navigate = useNavigate();
     let { transactions } = context;
     let lastTransaction = transactions[transactions.length - 1];
     let smin; let emin = new Date(), emax = new Date(), smax = new Date();
@@ -37,7 +39,7 @@ function Payment() {
         let last = lastTransaction.endDate;
         last = new Date(last);
         let lastnext = new Date(last);
-        lastnext.setDate(last.getDate() + 1);
+        //lastnext.setDate(last.getDate() + 1);
         if (lastnext.getTime() > today.getTime()) {
             smin = lastnext;
         }
@@ -107,6 +109,7 @@ function Payment() {
                 const result = await axios.post("http://localhost:5000/api/payment/success", data);
                 console.log(result)
                 alert(result.data.msg);
+                Navigate("/");
             },
         };
         const paymentObject = new window.Razorpay(options);
