@@ -16,8 +16,10 @@ function State(props) {
 
   let array = [];
   const [transactions, setTransactions] = useState(array);
+  const [allTransactions, setAllTransactions] = useState([]);
   let [valid, setValid] = useState(false);
-  let [menu, setMenu] = useState([]);
+  let [menu, setMenu] = useState([[],[],[]]);
+  let [menu1, setMenu1] = useState([]);
   let [attendance, setAttendance] = useState([]);
   let [day, setDay] = useState(0);
 
@@ -30,10 +32,10 @@ function State(props) {
       },
     });
     const json = await response.json();
-    let alltransactions = json.transactions;
-    setTransactions(alltransactions);
-    let recentTransaction1 = json.transactions[json.transactions.length - 1];
-    let recentTransaction2 = json.transactions[json.transactions.length - 2];
+    let alltransactions1 = json.transactions;
+    setTransactions(alltransactions1.reverse());
+    let recentTransaction1 = json.transactions[0];
+    let recentTransaction2 = json.transactions[1];
 
     let today = new Date();
     if (recentTransaction1) {
@@ -54,11 +56,28 @@ function State(props) {
       t4 = new Date(t4);
       if (t3.getTime() <= today.getTime() && t4.getTime() >= today.getTime()) {
         setValid(true);
-        setAttendance(recentTransaction1.attendance);
+        setAttendance(recentTransaction2.attendance);
         setDay(dateDiffInDays(t3,today)  );
       }
     }
   }
+
+
+  async function getAllTransactions(){
+    const response = await fetch("http://localhost:5000/api/transaction/getAllTransactions", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': localStorage.getItem("token")
+      },
+    });
+    let json=await response.json();
+    setAllTransactions(json.transactions.reverse());
+  }
+
+
+
+
 
   async function getMenu(session) {
 
@@ -70,14 +89,18 @@ function State(props) {
       body:JSON.stringify({"session":session})
     });
     const json = await response.json();
-    //console.log(json);
+    console.log(json);
     if(json.msg=="avaliable"){
-      setMenu(json.menu.menu);
+      menu[session-1]=[];
+      menu[session-1]=json.menu.menu;
+      setMenu(menu);
+      setMenu1(json.menu.menu);
     }
     else{
-      setMenu([]);
+      setMenu(menu);
+      setMenu1([]);
     }
-
+    
   }
 
   async function addMenu(session){
@@ -86,18 +109,18 @@ function State(props) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body:JSON.stringify({session,menu}),
+      body:JSON.stringify({session,"menu":menu1}),
     });
     let json=await response.json();
-    //console.log(json);
-    setMenu(json.menu);
+    console.log(json);
+    setMenu1(json.menu);
   }
 
 
 
 
   return (
-    <kContext.Provider value={{ getTransactions, transactions, valid, menu, setMenu, getMenu, attendance, day,addMenu }}>
+    <kContext.Provider value={{ getTransactions,getAllTransactions,allTransactions, transactions, valid, menu, setMenu, getMenu, attendance, day,addMenu,menu1,setMenu1 }}>
       {props.children}
 
     </kContext.Provider>

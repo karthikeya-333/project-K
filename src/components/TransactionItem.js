@@ -16,21 +16,21 @@ function TransactionItem(props) {
 
     let { transaction } = props;
 
-    function handleClick(event){
-        document.getElementsByClassNameName("moreinfo").slideToggle("slow")
-
-    }
 
     return (
-        <tr className="order-link transaction-item" style={{cursor:"pointer"}} onClick={handleClick}>
-            <th scope="row">{props.index + 1}</th>
-            <td>{transaction._id}</td>
-            <td>{formatDate(transaction.Date)}</td>
-            <td>{transaction.amount}</td>
-        </tr>
-
-        
-
+        <>
+            <tr  className="collapsible">
+                <th scope="row">{props.index + 1}</th>
+                {/* <th><span className="expandChildTable"></span></th> */}
+                <td>{transaction._id}</td>
+                <td>{formatDate(transaction.Date)}</td>
+                <td>{transaction.amount}</td>
+            </tr>
+            <tr className="content"> 
+                <td>data</td>
+                <td>data</td>
+            </tr>
+        </>
     )
 }
 

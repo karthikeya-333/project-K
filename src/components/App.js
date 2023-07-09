@@ -15,6 +15,7 @@ import AdminHome from "./AdminHome";
 import AdminNav from "./AdminNav";
 import Menu from "./Menu";
 import AdminTransactions from "./AdminTransactions";
+import Stats from "./Stats";
 
 
 
@@ -39,6 +40,7 @@ function App() {
       <Route path="/admin" element={<><AdminNav/><AdminHome/></>} />
       <Route path="/admin/menu" element={<><AdminNav/><Menu/></>} />
       <Route path="/admin/transactions" element={<><AdminNav/><AdminTransactions/></>} />
+      <Route path="/admin/stats" element={<><AdminNav/><Stats/></>} />
       
     </Routes>
   );

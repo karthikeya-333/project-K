@@ -1,0 +1,270 @@
+body, ul {
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5 !important;
+}
+
+
+.login{
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login .container {
+  max-width: 400px !important;
+  padding: 40px !important;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login h2 {
+  color: #505050;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #505050;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group button {
+  width: 100%;
+  padding: 12px;
+  background-color: #505050;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-group button:hover {
+  background-color: #404040;
+}
+
+.form-group .forgot-password {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #505050;
+}
+
+.form-group .signup-link {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #505050;
+  text-decoration: none;
+}
+
+.login a{
+  text-decoration: none !important;
+  color:  #404040 !important;
+}
+
+
+
+/* Navbar styles */
+.navbar {
+  background-color: #505050;
+  color: white;
+  padding: 0px !important;
+  font-family: Arial, sans-serif;
+  display: flex ;
+  justify-content: space-around !important ;
+  align-items: center ;
+  height: 70px;
+}
+
+.navbar-brand a {
+  color: white;
+  font-size: 24px;
+  text-decoration: none;
+}
+
+.navbar-links {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  margin-right: 60px;
+  background-color: #505050 !important;
+}
+
+.navbar-links li {
+  margin-left: 10px;
+}
+
+.navbar-links li:first-child {
+  margin-left: 0;
+}
+
+.navbar-links li a {
+  color: white;
+  text-decoration: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  transition: font-weight 0.3s ease;
+}
+
+.navbar-links li a:hover {
+  font-weight: bold;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  color: #505050;
+  padding: 0px !important;
+  border-radius: 4px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu li a {
+  display: block;
+  margin-bottom: 0px;
+}
+
+.dropdown-menu li a {
+  color: #505050;
+  text-decoration: none;
+}
+
+.dropdown-menu li :hover {
+  background-color: #505050;
+  color: white;
+}
+
+.payment{
+  /* background-color: #c8c5c5; */
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  display: flex;
+  /* justify-content: center;
+  align-items: center; */
+  height: 90vh;
+}
+
+.payment .container{
+  max-width: 400px !important;
+  padding: 0px !important;
+  /* padding-top: 10px !important; */
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 50px auto;
+  /* opacity: 0.6; */
+  font-weight: bold;
+  color: #505050;
+  align-items: center;
+}
+
+.payment-title{
+  background-color:#505050;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  color:#f5f5f5;
+  padding: 8px;
+  margin-bottom: 20px;
+}
+
+.home{
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  display: flex;
+
+}
+
+.home .container{
+  max-width: 600px !important;
+  padding: 0px !important;
+  text-align: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin: 50px auto;
+  font-weight: bold;
+  color: #505050;
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+
+.session-box{
+  display: flex;
+  padding: 10px;
+
+}
+
+.menu-box{
+  text-align: center;
+}
+
+.session-header{
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 15px 5px 15px;
+  font-weight: bold;
+  background-color: #505050;
+  color: #f5f5f5;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.scanner{
+  text-align: center;
+  width: 30em !important;
+}
+
+.transactions{
+  padding-top: 20px;
+  color:#505050;
+}
+
+th{
+  color:#505050;
+  font-weight: bold;
+}
+
+table{
+  border: 2px solid;
+}
+.collapsible {
+  cursor: pointer;
+}
+
+.content {
+  display: none;
+  padding: 10px;
+}

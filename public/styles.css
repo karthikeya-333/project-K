@@ -3,6 +3,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Lato', 'Arial', sans-serif;
+    background-color: #f5f5f5 !important;
   }
   
   /* HEADINGS */
@@ -364,3 +365,18 @@
     margin: auto;
   }
   
+  .expandChildTable:before {
+    content: "+";
+    display: block;
+    cursor: pointer;
+}
+.expandChildTable.selected:before {
+    content: "-";
+}
+.childTableRow {
+    display: none;
+}
+.childTableRow table {
+    border: 2px solid #555;
+}
+

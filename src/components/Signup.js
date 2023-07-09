@@ -14,7 +14,7 @@ const Signup = () => {
 
     const [credentials, setCredentials] = useState({ name: "", email: "", password: "", cpassword: "" });
     const [OTP, setOTP] = useState(otp);
-    const [sentOTP , setSentOTP]= useState();
+    const [sentOTP, setSentOTP] = useState();
     const navigate = useNavigate();
 
 
@@ -22,21 +22,21 @@ const Signup = () => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value })
     }
 
-    async function sendOTP(e){
+    async function sendOTP(e) {
         e.preventDefault();
         const response = await fetch("http://localhost:5000/api/auth/send-otp", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({email:credentials.email,purpose:"signin"}),
+            body: JSON.stringify({ email: credentials.email, purpose: "signin" }),
         });
         const json = await response.json();
-        if(json.success==true){
-            setOTP({...OTP,success:true});
+        if (json.success == true) {
+            setOTP({ ...OTP, success: true });
             setSentOTP(json.otp);
         }
-        else{
+        else {
             alert("Invalid credentials");
         }
 
@@ -46,7 +46,7 @@ const Signup = () => {
         setOTP({ ...OTP, value: e.target.value });
     }
 
-    async function verifyOTP(e){
+    async function verifyOTP(e) {
         // e.preventDefault();
         // const response = await fetch("http://localhost:5000/api/auth/verify-otp", {
         //     method: 'POST',
@@ -57,51 +57,98 @@ const Signup = () => {
         // });
         // const json = await response.json();
         // console.log(json);
-        if(sentOTP===OTP.value){
-            setOTP({...OTP,verified:true});
+        if (sentOTP === OTP.value) {
+            setOTP({ ...OTP, verified: true });
         }
-        else{
+        else {
             alert("Invalid OTP");
         }
 
     }
 
-    function handlechangePass(e){
-        setCredentials({...credentials, [e.target.name]: e.target.value});
+    function handlechangePass(e) {
+        setCredentials({ ...credentials, [e.target.name]: e.target.value });
     }
 
-    async function handleSubmit(e){
+    async function handleSubmit(e) {
         e.preventDefault();
-        if(credentials.password===credentials.cpassword){
+        if (credentials.password === credentials.cpassword) {
             const response = await fetch("http://localhost:5000/api/auth/createuser", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({name:credentials.name,email:credentials.email,password:credentials.password}),
-        });
-        const json = await response.json();
-        console.log(json);
-        if (json.success) {
-           localStorage.setItem('token', json.authtoken);
-           navigate("/");
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: credentials.name, email: credentials.email, password: credentials.password }),
+            });
+            const json = await response.json();
+            //console.log(json);
+            if (json.success) {
+                localStorage.setItem('token', json.authtoken);
+                navigate("/");
 
-       }
+            }
 
         }
-        else{
+        else {
             alert("passwords do not match");
         }
     }
 
 
-    
+
 
 
 
 
     return (
-        <div>
+
+        <div className='login'>
+            <div className="container">
+                <h2 style={{ marginBottom: 25 }}>Create an Account</h2>
+                <div className="form-group">
+                    <label for="username">Name:</label>
+                    <input type="text" value={credentials.name} name="name" onChange={onChange} />
+                </div>
+                <div className="form-group">
+                    <label for="username">Email:</label>
+                    <input type="email" className="form-control" value={credentials.email} name="email" onChange={onChange} />
+                </div>
+                <div className="form-group">
+                    <button type="submit" onClick={sendOTP}>Send OTP</button>
+                </div>
+                {OTP.success && <><div className="form-group">
+                    <label for="username">OTP:</label>
+                    <input type="number" value={OTP.value} onChange={handleChangeOTP} name="otp" />
+                </div>
+                    <div className="form-group">
+                        <button type="submit" onClick={verifyOTP} >Verify</button>
+                    </div></>}
+                {OTP.verified && <><div className="form-group">
+                    <label for="username">Password:</label>
+                    <input type="password" value={credentials.password} name="password" onChange={handlechangePass} />
+                </div>
+                    <div className="form-group">
+                        <label for="username">Confirm Password:</label>
+                        <input type="password" value={credentials.cpassword} name="cpassword" onChange={handlechangePass} />
+                    </div>
+                    <div className="form-group">
+                        <button type="submit" onClick={handleSubmit} >Submit</button>
+                    </div></>}
+
+
+            </div>
+        </div>
+
+
+
+
+    )
+}
+
+export default Signup;
+
+
+{/* <div>
             <div className="mb-3">
                 <label htmlFor="name" className="form-label">Name</label>
                 <input type="text" className="form-control" value={credentials.name} name="name" onChange={onChange} id="email" aria-describedby="emailHelp" />
@@ -124,8 +171,4 @@ const Signup = () => {
                 <button type="submit" onClick={handleSubmit} className="btn btn-primary">submit</button> </>}
 
 
-        </div>
-    )
-}
-
-export default Signup;
+        </div> */}

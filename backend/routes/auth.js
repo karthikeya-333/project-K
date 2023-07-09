@@ -146,7 +146,7 @@ router.post("/send-otp", async (req, res) => {
         res.send({ success: false, message: 'Failed to send OTP' });
       } else {
         req.session.otp = otp;
-        console.log(req.session.otp)
+        //console.log(req.session.otp)
         res.send({ success: true, otp, message: 'OTP sent successfully' });
       }
     });
@@ -225,7 +225,10 @@ router.post("/verify-user", async function (req, res) {
     let recentTransaction2 = transactions[transactions.length - 2];
     let valid = false;
     let today = new Date();
-    let today1 = today.toLocaleDateString()
+    let today1 = new Date();
+    today1=new Date(today1.setHours(15,0,0,0));
+    // let now = new Date().getTime();
+    // today1 =  new Date(now - (now % 86400000) + 86400000-1);
     if (recentTransaction1) {
       let t1 = recentTransaction1.startDate;
       let t2 = recentTransaction1.endDate;

@@ -42,14 +42,13 @@ router.get("/getTransactions",fetchuser,async(req,res)=>{
 router.get("/getAllTransactions",fetchuser,async(req,res)=>{
     try {
 
-        let user = await User.findById(req.user.id)
-        //console.log(user);
-        if (user.role != "admin") {
-            return res.status(401).send("Not Allowed");
-        }
-        //const user = await Transaction.find({user:req.user.id});
-        //console.log(orders)
-        res.send({"transactions":user.transactions});
+        // let user = await User.findById(req.user.id)
+        // //console.log(user);
+        // if (user.role != "admin") {
+        //     return res.status(401).send("Not Allowed");
+        // }
+        let transactions = await Transaction.find();
+        res.send({transactions});
         
     } catch (error) {
         console.error(error.message);

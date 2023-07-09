@@ -29,7 +29,7 @@ function formatDate(date) {
 function Payment() {
     const context = useContext(kContext);
     const [details, setDetails] = useState({ startDate: new Date(), endDate: new Date() });
-    const [amount, setAmount] = useState(100);
+    const [amount1, setAmount] = useState(100);
     const Navigate = useNavigate();
     let { transactions } = context;
     let lastTransaction = transactions[transactions.length - 1];
@@ -54,10 +54,14 @@ function Payment() {
     emax.setDate(smin.getDate() + 30);
     smax.setDate(today.getDate() + 5);
 
-    function handleChange(e) {
-        setDetails({ ...details, [e.target.name]: e.target.value });
-        // setAmount(120 * dateDiffInDays(details.endDate, details.startDate));
-        // console.log(120 * dateDiffInDays(new Date(details.endDate), new Date( details.startDate)))
+    async function handleChange(e) {
+        setDetails({ ...details, [e.target.name]: new Date(e.target.value) });
+        if(e.target.name=="startDate"){
+            setAmount(120 * (dateDiffInDays(new Date(e.target.value), new Date(details.endDate)) + 1));
+        }
+        else{
+            setAmount(120 * (dateDiffInDays(new Date(details.startDate), new Date(e.target.value)) + 1));
+        }
     }
 
     function loadScript(src) {
@@ -75,12 +79,16 @@ function Payment() {
     }
 
     async function handleClick() {
+        if(details.startDate.getTime()>=details.endDate.getTime()){
+            alert("Invalid Date Selection");
+            return;
+        }
         const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
         if (!res) {
             alert("Razorpay SDK failed to load. Are you online?");
             return;
         }
-        const result = await axios.post("http://localhost:5000/api/payment/create-order", { amount: 100 });
+        const result = await axios.post("http://localhost:5000/api/payment/create-order", { amount: amount1 });
         if (!result) {
             alert("Server error. Are you online?");
             return;
@@ -101,9 +109,9 @@ function Payment() {
                     razorpayPaymentId: response.razorpay_payment_id,
                     razorpayOrderId: response.razorpay_order_id,
                     razorpaySignature: response.razorpay_signature,
-                    startDate : details.startDate,
-                    endDate : details.endDate,
-                    authToken : localStorage.getItem('token')
+                    startDate: details.startDate,
+                    endDate: details.endDate,
+                    authToken: localStorage.getItem('token')
                 };
                 //console.log(data);
                 const result = await axios.post("http://localhost:5000/api/payment/success", data);
@@ -113,7 +121,7 @@ function Payment() {
             },
         };
         const paymentObject = new window.Razorpay(options);
-        paymentObject.on('payment.failed', function (response){
+        paymentObject.on('payment.failed', function (response) {
             alert(response.error.code);
             alert(response.error.description);
             alert(response.error.source);
@@ -121,25 +129,39 @@ function Payment() {
             alert(response.error.reason);
             alert(response.error.metadata.order_id);
             alert(response.error.metadata.payment_id);
-    });
+        });
         paymentObject.open();
 
     }
 
 
     return (
-        <div>
-            <label>start date</label>
-            <input type="date" name="startDate" min={formatDate(smin)} max={formatDate(smax)} onChange={handleChange} />
-            <label> end date</label>
-            <input type="date" name="endDate" min={formatDate(emin)} max={formatDate(emax)} onChange={handleChange} />
-            {/* <h3>{amount}</h3> */}
-            <button onClick={handleClick}>Pay</button>
+        <div className='payment'>
+            <div className="container">
+                <div className="payment-title">
+                    <h2 style={{ marginBottom: 0 }}>Recharge Now!</h2>
+                </div>
+                <div style={{ marginBottom: 50 }}>
+                    <label style={{ marginRight: 5 }}>Start Date:</label>
+                    <input type="date" name="startDate" min={formatDate(smin)} max={formatDate(smax)} onChange={handleChange} />
+                </div>
+                <div style={{ marginBottom: 50 }}>
+                    <label style={{ marginRight: 5 }}>End Date:</label>
+                    <input type="date" name="endDate" min={formatDate(emin)} max={formatDate(emax)} onChange={handleChange} />
+                </div>
+                <h3 style={{ marginBottom: 50 }}>Amount:{amount1}</h3>
+                <div className="form-group" style={{display:"inline"}}>
+                    <button style={{width:250}} onClick={handleClick}>Pay</button>
+                </div>
+
+            </div>
         </div>
     )
 };
 
 export default Payment;
+
+
 
 
 
